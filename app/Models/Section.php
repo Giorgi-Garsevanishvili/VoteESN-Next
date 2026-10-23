@@ -16,13 +16,16 @@ class Section extends Model
     use HasFactory;
 
     #[Override]
-    protected function casts()
+    protected function casts(): array
     {
         return [
             'name' => 'string',
         ];
     }
 
+    /**
+     * @return HasMany<User, $this>
+     */
     public function users(): HasMany
     {
         return $this->hasMany(User::class);

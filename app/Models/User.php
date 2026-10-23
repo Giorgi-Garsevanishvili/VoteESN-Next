@@ -57,11 +57,17 @@ class User extends Authenticatable implements FilamentUser, HasMedia, MustVerify
         ];
     }
 
+    /**
+     * @return HasMany<UserConsentLog, $this>
+     */
     public function consentLogs(): HasMany
     {
         return $this->hasMany(UserConsentLog::class);
     }
 
+    /**
+     * @return HasOne<Section, $this>
+     */
     public function section(): HasOne
     {
         return $this->hasOne(Section::class);
