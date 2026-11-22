@@ -7,21 +7,12 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Override;
 
-#[Fillable('name')]
+#[Fillable(['name'])]
 class Section extends Model
 {
     /** @use HasFactory<SectionFactory> */
     use HasFactory;
-
-    #[Override]
-    protected function casts(): array
-    {
-        return [
-            'name' => 'string',
-        ];
-    }
 
     /**
      * @return HasMany<User, $this>
@@ -29,5 +20,21 @@ class Section extends Model
     public function users(): HasMany
     {
         return $this->hasMany(User::class);
+    }
+
+    /**
+     * @return HasMany<Election, $this>
+     */
+    public function elections(): HasMany
+    {
+        return $this->hasMany(Election::class);
+    }
+
+    /**
+     * @return HasMany<Ballot, $this>
+     */
+    public function ballots(): HasMany
+    {
+        return $this->hasMany(Ballot::class);
     }
 }

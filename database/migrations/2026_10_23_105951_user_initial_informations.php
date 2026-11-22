@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Role;
+use App\Enums\UserStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,7 +15,8 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('surname', 255)->after('name');
-            $table->string('role')->default(Role::PENDING->value);
+            $table->string('role')->default(Role::VOTER->value);
+            $table->string('status')->default(UserStatus::PENDING->value);
             $table->foreignId('section_id')->constrained('sections');
             $table->timestamp('last_login')->nullable();
             $table->boolean('terms_consent_accepted')->nullable()->default(null);
