@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\Role;
 use App\Models\Election;
 use App\Models\User;
 
@@ -10,9 +11,9 @@ class ElectionPolicy
     /**
      * Determine whether the user can view any models.
      */
-    public function viewAny(User $user): bool
+    public function viewAny(User $user, Election $election): bool
     {
-        return false;
+        return $user->role === Role::ADMIN && $user->section()->is($election->section);
     }
 
     /**
@@ -20,7 +21,7 @@ class ElectionPolicy
      */
     public function view(User $user, Election $election): bool
     {
-        return false;
+        return $user->role === Role::ADMIN && $user->section()->is($election->section);
     }
 
     /**
@@ -28,7 +29,7 @@ class ElectionPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->role === Role::ADMIN;
     }
 
     /**
@@ -36,7 +37,7 @@ class ElectionPolicy
      */
     public function update(User $user, Election $election): bool
     {
-        return false;
+        return $user->role === Role::ADMIN && $user->section()->is($election->section);
     }
 
     /**
@@ -44,7 +45,7 @@ class ElectionPolicy
      */
     public function delete(User $user, Election $election): bool
     {
-        return false;
+        return $user->role === Role::ADMIN && $user->section()->is($election->section);
     }
 
     /**
@@ -52,7 +53,7 @@ class ElectionPolicy
      */
     public function restore(User $user, Election $election): bool
     {
-        return false;
+        return $user->role === Role::ADMIN && $user->section()->is($election->section);
     }
 
     /**
@@ -60,6 +61,6 @@ class ElectionPolicy
      */
     public function forceDelete(User $user, Election $election): bool
     {
-        return false;
+        return $user->role === Role::ADMIN && $user->section()->is($election->section);
     }
 }

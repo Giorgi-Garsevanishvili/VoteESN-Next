@@ -3,6 +3,9 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Enums\Role;
+use App\Enums\UserStatus;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
@@ -10,8 +13,8 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -22,14 +25,18 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 /**
  * @property int $id
  * @property string $name
+ * @property string $surname
  * @property string $email
  * @property Carbon|null $email_verified_at
  * @property string $password
+ * @property Role $role
+ * @property UserStatus $status
+ * @property int $section_id
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'surname', 'email', 'password'])]
+#[Fillable(['name', 'surname', 'email', 'password', 'role', 'status'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements FilamentUser, HasMedia, MustVerifyEmail
 {
@@ -41,7 +48,11 @@ class User extends Authenticatable implements FilamentUser, HasMedia, MustVerify
     #[Override]
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->hasVerifiedEmail();
+        if ($panel->getId() !== 'admin') {
+            return false;
+        }
+
+        return $this->role === Role::ADMIN && $this->hasVerifiedEmail();
     }
 
     /**
@@ -54,6 +65,8 @@ class User extends Authenticatable implements FilamentUser, HasMedia, MustVerify
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'role' => Role::class,
+            'status' => UserStatus::class,
         ];
     }
 
@@ -66,10 +79,10 @@ class User extends Authenticatable implements FilamentUser, HasMedia, MustVerify
     }
 
     /**
-     * @return HasOne<Section, $this>
+     * @return BelongsTo<Section, $this>
      */
-    public function section(): HasOne
+    public function section(): BelongsTo
     {
-        return $this->hasOne(Section::class);
+        return $this->belongsTo(Section::class);
     }
 }

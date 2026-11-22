@@ -8,14 +8,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Override;
 
-#[Fillable('topic_text', 'sort_order')]
+#[Fillable(['topic_text', 'sort_order'])]
 class Topic extends Model
 {
     #[Override]
     protected function casts()
     {
         return [
-            'topic_text' => 'string',
             'sort_order' => 'integer',
         ];
     }
@@ -34,5 +33,13 @@ class Topic extends Model
     public function election(): BelongsTo
     {
         return $this->belongsTo(Election::class);
+    }
+
+    /**
+     * @return HasMany<BallotSelection, $this>
+     */
+    public function ballotSelections(): HasMany
+    {
+        return $this->hasMany(BallotSelection::class);
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Role;
+use App\Enums\UserStatus;
 use App\Models\Section;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -21,18 +23,28 @@ class DatabaseSeeder extends Seeder
         $defaultSections = [
             ['name' => 'DEMO'],
             ['name' => 'GLOBAL'],
-            ['name' => 'PENDING'],
         ];
 
         Section::factory()->createMany($defaultSections);
 
         $demoSection = Section::query()->where('name', 'DEMO')->firstOrFail();
 
-        User::factory()->create([
-            'name' => 'Test',
-            'surname' => 'User',
-            'email' => 'test@example.com',
-            'section_id' => $demoSection->id,
+        User::factory()->createMany([
+            [
+                'name' => 'test',
+                'surname' => 'admin',
+                'email' => 'testadmin@example.com',
+                'section_id' => $demoSection->id,
+                'role' => Role::ADMIN->value,
+                'status' => UserStatus::ACTIVE->value, ],
+            [
+                'name' => 'test',
+                'surname' => 'voter',
+                'email' => 'testvoter@example.com',
+                'section_id' => $demoSection->id,
+                'role' => Role::VOTER->value,
+                'status' => UserStatus::ACTIVE->value,
+            ],
         ]);
     }
 }
